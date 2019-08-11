@@ -44,11 +44,19 @@ violence.","release_date":"2019-06-30"}
     // you might have to do something important here!
   }
 
-  getMovies() {
+  getMovies(genre) {
+    //console.log(genre);
     // make an axios request to your server on the GET SEARCH endpoint
     axios
-      .get("/movies/search")
-      .then(({ results }) => this.setState({ movies: results }));
+      .get(`/movies/search${genre > 0 ? `?genre=${genre}` : ""}`)
+      .then(({ data }) => {
+        let [...movies] = data.results;
+        this.setState({ movies });
+      });
+  }
+
+  componentDidMount() {
+    this.getMovies();
   }
 
   saveMovie(movie) {
@@ -57,10 +65,9 @@ violence.","release_date":"2019-06-30"}
     axios
       .post("/movies/save", { movieDBid })
       .then(results => {
-        let favorites = [movie];
-        this.state.favorites.reduce(
+        let favorites = this.state.favorites.reduce(
           (acc, curr) => (curr.id === movieDBid ? acc : acc.concat([curr])),
-          favorites
+          [movie]
         );
         this.setState({ favorites });
       })
@@ -69,15 +76,14 @@ violence.","release_date":"2019-06-30"}
 
   deleteMovie(movie) {
     // same as above but do something diff
-    console.log(movie);
+    //console.log(movie);
     let movieDBid = movie.id;
     axios
       .delete(`/movies/delete/${movieDBid}`)
       .then(results => {
-        let favorites = [];
-        this.state.favorites.reduce(
+        let favorites = this.state.favorites.reduce(
           (acc, curr) => (curr.id === movieDBid ? acc : acc.concat([curr])),
-          favorites
+          []
         );
         this.setState({ favorites });
       })
@@ -102,6 +108,7 @@ violence.","release_date":"2019-06-30"}
           <Search
             swapFavorites={this.swapFavorites}
             showFaves={this.state.showFaves}
+            getMoviesForGenre={this.getMovies}
           />
           <Movies
             movies={

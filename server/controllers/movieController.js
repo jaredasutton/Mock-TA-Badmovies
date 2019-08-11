@@ -4,18 +4,16 @@ const apiHelpers = require("../helpers/apiHelpers.js");
 //Return requests to the client
 module.exports = {
   getSearch: (req, res) => {
+    let { genre } = req.query;
     // get the search genre
-
+    //console.log(req.query.genre);
     // https://www.themoviedb.org/account/signup
     // get your API KEY
-
+    let queryParams = ["sort_by=vote_average.asc", "include_adult=false"];
+    genre ? queryParams.push(`with_genres=${genre}`) : null;
     // use this endpoint to search for movies by genres, you will need an API key
     apiHelpers
-      .requestMovieDB("discover/movie", [
-        "sort_by=vote_average.asc",
-        "include_adult=false",
-        "page=1"
-      ])
+      .requestMovieDB("discover/movie", queryParams)
       .then(data =>
         res.send(JSON.stringify({ results: JSON.parse(data).results }))
       )
@@ -44,7 +42,7 @@ module.exports = {
     // send back
   },
   saveMovie: (req, res) => {
-    console.log(req.body);
+    //console.log(req.body);
     let { movieDBid } = req.body;
     if (movieDBid === undefined) {
       res.status(400).send();

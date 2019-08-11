@@ -9,9 +9,9 @@ module.exports.requestMovieDB = (endpoint, query) => {
     (acc, curr) => acc + `&${curr}`,
     ""
   )}`;
-  console.log(url);
+  //console.log(url);
   return axios.get(url).then(({ data }) => {
-    console.log(`\n\nresponse:\n\n${data}\n\n`);
+    //console.log(`\n\nresponse:\n\n${data}\n\n`);
     return JSON.stringify(data);
   });
 };
