@@ -5,6 +5,18 @@ const sqlDb = require("../../db/sql");
 //const mongoDb = require('../../db/mongodb')
 
 module.exports = {
+  getFavoriteWithId: id => {
+    return new Promise((resolve, reject) => {
+      let preparedQuery = `select * from favorites where movieDBid=?`;
+      sqlDb.query(preparedQuery, [id], (err, results, fields) => {
+        if (err || !results.length) {
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      });
+    });
+  },
   addFavorite: id => {
     return new Promise((resolve, reject) => {
       let preparedQuery = `insert into favorites (movieDBid) values (?)`;

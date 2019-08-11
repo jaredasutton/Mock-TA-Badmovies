@@ -1,8 +1,9 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 var request = require("request");
+var morgan = require("morgan");
 var app = express();
-
+app.use(morgan("dev"));
 // Sign up and get your moviedb API key here:
 // https://www.themoviedb.org/account/signup
 

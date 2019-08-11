@@ -16,7 +16,9 @@ module.exports = {
         "include_adult=false",
         "page=1"
       ])
-      .then(data => res.send(data))
+      .then(data =>
+        res.send(JSON.stringify({ results: JSON.parse(data).results }))
+      )
       .catch(err => {
         console.log(err);
         res.status(500).send();
@@ -31,7 +33,9 @@ module.exports = {
     // use this endpoint, which will also require your API key: https://api.themoviedb.org/3/genre/movie/list
     apiHelpers
       .requestMovieDB("genre/movie/list")
-      .then(data => res.send(data))
+      .then(data =>
+        res.send(JSON.stringify({ results: JSON.parse(data).genres }))
+      )
       .catch(err => {
         console.log(err);
         res.status(500).send();
@@ -46,16 +50,20 @@ module.exports = {
       res.status(400).send();
     } else {
       movieModel
-        .addFavorite(movieDBid)
-        .then(results => {
-          res.status(201).send();
-        })
-        .catch(err => res.status(500).send());
+        .getFavoriteWithId(movieDBid)
+        .then(results => res.status(201).send(results))
+        .catch(err =>
+          movieModel
+            .addFavorite(movieDBid)
+            .then(results => {
+              res.status(201).send();
+            })
+            .catch(err => res.status(500).send())
+        );
     }
   },
   deleteMovie: (req, res) => {
-    console.log(req.body);
-    let { movieDBid } = req.body;
+    let movieDBid = req.params.movieDBid;
     if (movieDBid === undefined) {
       res.status(400).send();
     } else {
